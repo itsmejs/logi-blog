@@ -22,7 +22,7 @@ const todoSchema = mongoose.Schema({
   Completed: Boolean,
 });
 
-const toto = mongoose.model("todos", todoSchema);
+const todo = mongoose.model("todos", todoSchema);
 
 module.exports = {
   todo,
