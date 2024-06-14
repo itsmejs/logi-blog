@@ -1,33 +1,59 @@
 const express = require("express");
 const { createTodo, updateTodo } = require("./types");
-
+const { todo } = require("./db");
 const app = express();
 
 app.use(express.json());
 
-app.post("/todos", (req, res, next) => {
-    const createpay_load = req.body;
-    const parsedpayload = createTodo.safeParse{createpay_load};
-    if(!parsedpayload.success){
-        res.status(411).json({msg:"you sent wrong input"})
-       return; 
+app.post("/todos", async function (req, res, next) {
+  const createPayLoad = req.body;
+  const parsedpayload = createTodo.safeParse(createPayLoad);
+
+  if (!parsedpayload.success) {
+    res.status(411).json({ msg: "you sent wrong input" });
+    return;
+  }
+
+  // put in mongoose
+  await todo.create({
+    title: createPayLoad.title,
+    discription: createPayLoad.discription,
+    conpleted: flase,
+  });
+
+  res.json({
+    msg: "todo created",
+  });
+});
+
+app.get("/todos", async function (req, res, next) {
+  const todo = await todo.find({});
+
+  res.json({
+    todos,
+  });
+});
+
+app.put("/done", async function (req, res, next) {
+  const updatepay_load = req.body;
+  const parsedpayload = updateTodo.safeParse(updatepay_load);
+  if (!parsedpayload.success) {
+    res.status(411).json({ msg: "you sent wrong input" });
+    return;
+  }
+
+  await todo.update(
+    {
+      _id: req.body.id,
+    },
+    {
+      completed: true,
     }
+  );
 
-
+  res.json({
+    msg: "todo marked as completed",
+  });
 });
 
-app.get("/todos", (req, res, next) => {});
-
-app.put("/done", (req, res, next) => {
-    const updatepay_load = req.body;
-    const parsedpayload = updateTodo.safeParse{updatepay_load};
-    if(!parsedpayload.success){
-        res.status(411).json({msg:"you sent wrong input"})
-       return; 
-    }
-
-});
-
-app.listen(3000, (err) => {
-  console.log("this did not work");
-});
+app.listen(3000);
